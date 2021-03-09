@@ -65,6 +65,13 @@ function multiplication(n1::Value, n2::Value)::Value
   end
 end
 
+function leq(n1::Value, n2::Value)::Value
+  if typeof(n1) == NumV && typeof(n2) == NumV
+    n1, n2 = n1.n, n2.n
+    return BooleanV(n1 <= n2)
+  end
+end
+
 function lookup(id, env)
   for pair in env
     if pair.first == id
@@ -78,9 +85,14 @@ end
 function interp(expr::ExprC, env::Array)::Value
   @match expr begin
     app::AppC => 
-    let func = interp(app.func, env)
-      return func.op(interp(app.args[1], env), interp(app.args[2], env))
-    end
+      let func = interp(app.func, env)
+        # had issues doing a nested match
+        if typeof(func) == PrimV
+          return func.op(interp(app.args[1], env), interp(app.args[2], env))
+        else
+          error("Cannot apply")
+        end
+      end
     num::NumC => return NumV(num.n)
     str::StringC => return StringV(str.s)
     id::IdC => return lookup(id.symbol, env)
@@ -98,6 +110,7 @@ top_env = [
   Pair('-', PrimV(subtraction)),
   Pair('*', PrimV(multiplication)),
   Pair('/', PrimV(division)),
+  Pair("<=", PrimV(leq))
 ]
 
 # TEST CASES
@@ -112,3 +125,6 @@ top_env = [
 @test interp(StringC("Hello!"), top_env) == StringV("Hello!")
 @test interp(IdC('t'), top_env) == BooleanV(true)
 @test interp(IdC('f'), top_env) == BooleanV(false)
+@test interp(AppC(IdC("<="), [NumC(2), NumC(2)]), top_env) == BooleanV(true)
+@test interp(AppC(IdC("<="), [NumC(1), NumC(2)]), top_env) == BooleanV(true)
+@test interp(AppC(IdC("<="), [NumC(2), NumC(1)]), top_env) == BooleanV(false)
