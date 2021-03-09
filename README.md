@@ -18,3 +18,10 @@ The key of this assignment is not to accomplish this task, but rather to explore
 
 https://www.brinckerhoff.org/clements/2212-csc430/Assignments/higher-order-functions.html
 https://www.brinckerhoff.org/clements/2212-csc430/Assignments/unseen-language-assignment.html
+
+## Timeline
+
+I have 5 hours to do this. This is how they went
+
+1 hour in: Incorporated Primary Operators, not clean at all, but just trying to be fast
+           Julia does seem really promising so far and easy transition over
