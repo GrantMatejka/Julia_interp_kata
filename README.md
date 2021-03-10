@@ -29,3 +29,4 @@ I have 5 hours to do this. This is how they went
 +30 min: Created and pretty much finished presentation
 +1 hour: Added in support for closure and lambdas
 +30 min: Some more random work
++1.5 hour: Tried to get some parsing in but couldn't get much in, also finished presentation

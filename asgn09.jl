@@ -173,3 +173,52 @@ top_env = [
 
 @test interp(AppC(LamC(['x', 'y'], AppC(IdC('-'), [IdC('x'), IdC('y')])), [NumC(3), NumC(2)]), top_env) == NumV(1)
 @test interp(AppC(LamC(['x', 'y'], AppC(IdC('-'), [IdC('y'), IdC('x')])), [NumC(3), NumC(2)]), top_env) == NumV(-1)
+@test interp(AppC(LamC(["subtrctr", 'x', 'y'], AppC(IdC("subtrctr"), [IdC('y'), IdC('x')])), [LamC(['x', 'y'], AppC(IdC('-'), [IdC('y'), IdC('x')])), NumC(3), NumC(2)]), top_env) == NumV(-1)
+
+# At this point ~4 hours in interp works with pregenerated AST
+# now I want to look into parsing 
+
+#= Trying out built in parsing
+ex1 = Meta.parse("2 + 2")
+println(typeof(ex1))
+println(ex1.head)
+println(ex1.args)
+
+ex2 = Meta.parse("x -> x + 2")
+println(typeof(ex2))
+println(ex2.head)
+println(ex2.args)
+
+ex3 = Meta.parse("((f, x) -> f(x))(x -> x + x, 2)")
+println(typeof(ex3))
+println(ex3.head)
+println(ex3.args)
+
+ex4 = Meta.parse("(x, y) -> x + y")
+println(typeof(ex4))
+println(ex4.head)
+println(ex4.args)
+=#
+
+function parse_wtuq(parsed_expr)
+  if typeof(parsed_expr) == Symbol
+    return IdC(String(parsed_expr))
+  elseif typeof(parsed_expr) == Int
+    return NumC(parsed_expr)
+  elseif typeof(parsed_expr) == String
+    return StringC(parsed_expr)
+  elseif parsed_expr.head == :->
+    println("lambda")
+  elseif length(parsed_expr.args) == 0
+    error("No arguments, this is bad")
+  elseif parsed_expr.args[1] in [:+, :-, :*, :/, :<=]
+    return AppC(parse_wtuq(parsed_expr.args[1]), [parse_wtuq(parsed_expr.args[2]), parse_wtuq(parsed_expr.args[3])])
+  end
+end
+
+parse_wtuq(Meta.parse("x -> x + x"))
+@test parse_wtuq(Meta.parse("x + 2")).args == [IdC("x"), NumC(2)]
+@test parse_wtuq(Meta.parse("x + 2")).func == IdC("+")
+@test parse_wtuq(Meta.parse("5")) == NumC(5)
+@test parse_wtuq(Meta.parse("x")) == IdC("x")
+@test parse_wtuq(Meta.parse("\"x\"")) == StringC("x")
