@@ -1,5 +1,5 @@
-# PL430_FinalProject
-Repo for my final program in CSC 430 Programming Languages
+# Julia PL Kata
+Fun little kata for building an interpreter in Julia
 
 ## Language: Julia
 
@@ -11,7 +11,6 @@ Implement an interpreter for a language with some basic types and local variable
 Local variable bindings are going to be handled by closures.
 
 The key of this assignment is not to accomplish this task, but rather to explore a new language in the pursuit of said task, with a 5 hour time limit.
-
 
 ## Timeline
 
@@ -29,4 +28,3 @@ I have 5 hours to do this. This is how they went
 +30 min: Some more random work
 
 +1.5 hour: Tried to get some parsing in but couldn't get much in, also finished presentation
-
